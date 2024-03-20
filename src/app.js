@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = requite("body-parser");
+const bodyParser = require("body-parser");
 const { config } = require("dotenv");
 config();
 

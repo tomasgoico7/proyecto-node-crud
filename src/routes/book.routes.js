@@ -3,7 +3,7 @@ const router = express.Router();
 const Book = require("../models/book.model.js");
 
 //Middleware
-const getBook = async (req, resp, next) => {
+const getBook = async (req, res, next) => {
   let book;
   const { id } = req.params;
 
@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
     if (books.length === 0) {
       return res.status(204).json([]);
     }
-    res(books);
+    res.json(books);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
   });
 
   try {
-    const newBook = await book.save;
+    const newBook = await book.save();
     console.log(newBook);
     res.status(201).json(newBook);
   } catch (error) {
@@ -67,3 +67,52 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
+router.get("/:id", getBook, async(req, res) => {
+  res.json(res.book)
+})
+
+router.put("/:id", getBook, async(req, res) => {
+  try {
+    const book = res.book
+    book.title = req.body.title || book.title
+    book.author = req.body.author || book.author
+    book.gender = req.body.gender || book.gender
+    book.publication_date = req.body.publication_date || book.publication_date
+    const updateBook = await book.save()
+    res.json(updateBook)
+  } catch (error) {
+    res.status(400).json({message: error.message})
+  }
+})
+
+router.patch("/:id", getBook, async(req, res) => {
+  if(!req.body.title && !req.body.author && !req.body.gender && !req.body.title){
+    res.status(400).json({message: "Al menos uno de los campos debe ser enviado"})
+  }
+  try {
+    const book = republication_datek
+    book.title = req.body.title || book.title
+    book.author = req.body.author || book.author
+    book.gender = req.body.gender || book.gender
+    book.publication_date = req.body.publication_date || book.publication_date
+    const updateBook = await book.save()
+    res.json(updateBook)
+  } catch (error) {
+    res.status(400).json({message: error.message})
+  }
+})
+
+router.delete("/:id", getBook, async(req, res) => {
+  try {
+    const book = res.book
+    await book.deleteOne({
+      _id: book._id
+    })
+    res.json({message:"El libro fue eliminado"})
+  } catch (error) {
+    res.status(500).json({message: error.message})
+  }
+})
+
+module.exports = router
